@@ -17,7 +17,7 @@ exports.createTask = async (req, res) => {
             description,
             status,
             dueDate,
-            category: categoryDoc._id, 
+            category: categoryDoc._id,
             user: req.user.id
         });
 
@@ -25,6 +25,57 @@ exports.createTask = async (req, res) => {
         res.status(201).json(task);
     } catch (error) {
         console.log("createTask err = ", error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+// Get tasks
+exports.getTasks = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        let query = { user: userId };
+
+        if (req.query.status) {
+            query.status = req.query.status;
+        }
+
+        if (req.query.category) {
+            const category = await Category.findOne({ name: req.query.category, user: userId });
+            if (category) {
+                query.category = category._id;
+            } else {
+                return res.status(404).json({ message: 'Category not found' });
+            }
+        }
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const tasks = await Task.find(query)
+            .populate('category')
+            .skip(skip)
+            .limit(limit);
+
+        const totalTasks = await Task.countDocuments(query);
+
+        if (tasks.length === 0) {
+            return res.status(404).json({ message: 'No tasks found for the given filters' });
+        }
+
+        res.status(200).json({
+            message: 'success',
+            tasks,
+            pagination: {
+                totalTasks,
+                currentPage: page,
+                totalPages: Math.ceil(totalTasks / limit),
+                pageSize: limit,
+            },
+        });
+    } catch (err) {
+        console.error(err);
         res.status(500).json({ message: 'Server error' });
     }
 };

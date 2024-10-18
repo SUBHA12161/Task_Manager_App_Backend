@@ -18,6 +18,15 @@ exports.createCategory = async (req, res) => {
     }
 };
 
+exports.getCategory = async (req, res) => {
+    try {
+        const category = await Category.find({ user: req.user.id });
+        res.status(201).json(category);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 // Delete category
 exports.deleteCategory = async (req, res) => {
     try {

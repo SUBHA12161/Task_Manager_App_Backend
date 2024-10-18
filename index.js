@@ -4,13 +4,20 @@ const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
-
+const cors = require('cors');
 
 dotenv.config();
 
 const app = express();
 
 connectDB();
+
+app.use((req, res, next) => {
+    console.log(req.path, req.method, new Date())
+    next()
+})
+
+app.options('*', cors());
 
 app.use(express.json());
 
