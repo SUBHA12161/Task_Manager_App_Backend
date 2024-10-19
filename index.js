@@ -16,14 +16,14 @@ const categoryRoutes = require('./routes/categoryRoutes');
 
 app.use(express.json());
 
-const cors = require('cors');
+// const cors = require('cors');
 
-app.use(cors({
-    origin: 'https://task-manager-app-frontend-seven.vercel.app/',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-}));
-
+// app.use(cors({
+//     origin: 'https://task-manager-app-frontend-seven.vercel.app/',
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     credentials: true,
+// }));
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
