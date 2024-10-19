@@ -9,20 +9,21 @@ const cors = require('cors');
 dotenv.config();
 
 const app = express();
-
-connectDB();
+app.use(express.json());
+app.options('*', cors());
 
 app.use((req, res, next) => {
-    console.log(req.path, req.method, new Date())
+    console.log("test ===== ", req.path, req.method, new Date())
     next()
 })
 
-app.options('*', cors());
-
-app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('API is running...');
+});
+
+app.get('/test', (req, res) => {
+    res.status(200).send('Test route is working');
 });
 
 // User routes
@@ -33,5 +34,6 @@ app.use('/api/categories', categoryRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
+    connectDB();
     console.log(`Server running on port ${PORT}`);
 });
